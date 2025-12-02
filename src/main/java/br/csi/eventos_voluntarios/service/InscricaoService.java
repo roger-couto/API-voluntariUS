@@ -10,8 +10,8 @@ import jakarta.validation.ValidationException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -36,9 +36,11 @@ public class InscricaoService {
             throw new ValidationException("Usuário já inscrito neste evento.");
         }
 
-        // 4. Validar se há vagas
+        // 4. Validar se há vagas (Agora que getMaxVoluntarios compila)
         int inscritos = inscricaoRepository.countByEventoId(idEvento);
-        if (inscritos >= evento.getMaxVoluntarios()) {
+        Integer maxVoluntarios = evento.getMaxVoluntarios();
+
+        if (maxVoluntarios != null && inscritos >= maxVoluntarios) {
             throw new ValidationException("Evento lotado.");
         }
 
@@ -46,18 +48,16 @@ public class InscricaoService {
         Inscricao inscricao = new Inscricao();
         inscricao.setUsuario(usuario);
         inscricao.setEvento(evento);
-        inscricao.setStatus("CONFIRMADA"); // Status padrão
+        inscricao.setStatus("CONFIRMADA");
 
         return inscricaoRepository.save(inscricao);
     }
 
     @Transactional
     public void cancelarInscricao(Long idEvento, Usuario usuario) {
-        // 1. Buscar a inscrição específica
         Inscricao inscricao = inscricaoRepository.findByUsuarioIdAndEventoId(usuario.getId(), idEvento)
                 .orElseThrow(() -> new EntityNotFoundException("Inscrição não encontrada."));
 
-        // 2. Remover a inscrição
         inscricaoRepository.delete(inscricao);
     }
 

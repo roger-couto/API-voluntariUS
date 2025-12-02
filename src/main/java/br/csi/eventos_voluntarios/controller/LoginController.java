@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/login")
+// 💡 CORRIGIDO: Alterando a rota de /login para /auth para evitar conflito com o filtro padrão do Spring Security
+@RequestMapping("/auth")
 @AllArgsConstructor
 public class LoginController {
 
@@ -25,11 +26,17 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<DadosToken> login(@RequestBody @Valid DadosAutenticacao dados) {
+        // Cria o objeto de autenticação com e-mail (username) e senha
         var token = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
+
+        // Autentica o usuário usando o AuthenticationManager
         Authentication authentication = manager.authenticate(token);
+
+        // Converte o principal para objeto Usuario e gera o token JWT
         var usuario = (Usuario) authentication.getPrincipal();
         var tokenJWT = tokenService.gerarToken(usuario);
 
+        // Retorna o token com status 200 OK
         return ResponseEntity.ok(new DadosToken(tokenJWT));
     }
 }

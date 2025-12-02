@@ -11,31 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/inscricoes")
+@RequestMapping("/usuarios")
 @AllArgsConstructor
 public class InscricaoController {
 
     private final InscricaoService inscricaoService;
 
-    @PostMapping("/evento/{idEvento}")
-    public ResponseEntity<String> inscrever(
-            @PathVariable Long idEvento,
-            @AuthenticationPrincipal Usuario usuario
-    ) {
-        inscricaoService.inscrever(idEvento, usuario);
-        return ResponseEntity.ok("Inscrição realizada com sucesso.");
-    }
-
-    @DeleteMapping("/evento/{idEvento}")
-    public ResponseEntity<String> cancelarInscricao(
-            @PathVariable Long idEvento,
-            @AuthenticationPrincipal Usuario usuario
-    ) {
-        inscricaoService.cancelarInscricao(idEvento, usuario);
-        return ResponseEntity.ok("Inscrição cancelada com sucesso.");
-    }
-
-    @GetMapping("/minhas")
+    @GetMapping("/minhas-inscricoes")
     public ResponseEntity<List<Inscricao>> getMinhasInscricoes(@AuthenticationPrincipal Usuario usuario) {
         List<Inscricao> inscricoes = inscricaoService.getInscricoesPorUsuario(usuario.getId());
         return ResponseEntity.ok(inscricoes);

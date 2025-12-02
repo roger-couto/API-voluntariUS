@@ -1,3 +1,5 @@
+// src/main/java/br/csi/eventos_voluntarios/repository/InscricaoRepository.java
+
 package br.csi.eventos_voluntarios.repository;
 
 import br.csi.eventos_voluntarios.model.Inscricao;

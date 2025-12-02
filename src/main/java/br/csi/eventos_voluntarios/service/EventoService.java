@@ -27,25 +27,30 @@ public class EventoService {
         evento.setDataEvento(dto.dataEvento());
         evento.setLocal(dto.local());
         evento.setMaxVoluntarios(dto.maxVoluntarios());
-        evento.setUsuario(organizador); // Define o usuário logado como organizador
-        evento.setStatus("ATIVO"); // Define status padrão
+        evento.setUsuario(organizador);
+
+        // 🔥 CORREÇÃO: FRONT ESPERA "ABERTO"
+        evento.setStatus("ABERTO");
 
         Evento salvo = eventoRepository.save(evento);
         return new EventoDTO(salvo);
     }
 
+    @Transactional(readOnly = true)
     public List<EventoDTO> listarEventos() {
         return eventoRepository.findAll().stream()
                 .map(EventoDTO::new)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public EventoDTO getEventoById(Long id) {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Evento não encontrado"));
         return new EventoDTO(evento);
     }
 
+    @Transactional(readOnly = true)
     public List<EventoDTO> listarEventosPorOrganizador(Long organizadorId) {
         return eventoRepository.findByUsuarioId(organizadorId).stream()
                 .map(EventoDTO::new)

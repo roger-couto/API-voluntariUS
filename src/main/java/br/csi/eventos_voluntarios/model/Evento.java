@@ -1,5 +1,7 @@
 package br.csi.eventos_voluntarios.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +17,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Evento {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +30,7 @@ public class Evento {
     @Column(name = "data_evento", nullable = false)
     private LocalDateTime dataEvento;
 
-    @Column(name = "local", nullable = false)
+    @Column(nullable = false)
     private String local;
 
     @Column(name = "max_voluntarios", nullable = false)
@@ -34,8 +38,10 @@ public class Evento {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario; // Organizador
+    @JsonBackReference // impede loop infinito (Evento -> Usuario -> Evento)
+    private Usuario usuario;
 
+    @Column(nullable = false)
     private String status;
 
     @CreationTimestamp
