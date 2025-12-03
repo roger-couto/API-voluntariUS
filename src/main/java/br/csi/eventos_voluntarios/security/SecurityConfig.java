@@ -51,7 +51,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // Endpoints protegidos
-                        .requestMatchers("/eventos/**").authenticated()
+                        .requestMatchers("/eventos/**").permitAll()
                         .requestMatchers("/inscricoes/**").authenticated()
                         .anyRequest().authenticated()
                 )
